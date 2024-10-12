@@ -1,0 +1,47 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  id: String!
+  owner: String!
+}
+
+type Status {
+  id: Float!
+  description: String!
+}
+
+type TransferType {
+  id: Float!
+  name: String!
+}
+
+type Transaction {
+  id: String!
+  accountExternalIdDebit: Account!
+  accountDebitId: String!
+  accountExternalIdCredit: Account!
+  accountCreditId: String!
+  value: Float!
+  transferType: TransferType!
+  transferTypeId: Float!
+  status: Status!
+  statusId: Status!
+}
+
+type Query {
+  getAll: Account!
+  hello: String!
+}
+
+type Mutation {
+  createTransaction(input: CreateTransactionInput!): Transaction!
+}
+
+input CreateTransactionInput {
+  accountExternalIdDebit: String!
+  accountExternalIdCredit: String!
+  value: Float!
+  transferTypeId: Float!
+}
