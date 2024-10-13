@@ -29,13 +29,11 @@ export class TransactionService {
 
     await this.transactionRepository.save(newTransaction);
 
-    await this.kafkaService.sendMessage(
-      this._pendingQueueTopic,
-      newTransaction,
-    );
-
-    return this.transactionRepository.findOne({
+    const transaction = await this.transactionRepository.findOne({
       where: { id: newTransaction.id },
     });
+
+    await this.kafkaService.sendMessage(this._pendingQueueTopic, transaction);
+    return transaction;
   }
 }
