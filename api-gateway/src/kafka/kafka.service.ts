@@ -1,29 +1,37 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
-import { Transaction } from './../db/entities/transaction.entity';
+import { Injectable } from '@nestjs/common';
+import { Kafka } from 'kafkajs';
+import { Transaction } from 'src/db/entities/transaction.entity';
 
 @Injectable()
 export class KafkaService {
-  constructor(
-    @Inject('KAFKA_CLIENT') private readonly kafkaClient: ClientKafka,
-  ) {}
+  private kafka = new Kafka({
+    clientId: 'api-gateway',
+    brokers: [process.env.KAFKA_BROKER], // Dirección del broker de Kafka
+  });
+  private producer = this.kafka.producer();
 
-  async sendMessage(topic: string, transaction: Transaction) {
-    const kafkaConn = await this.kafkaClient.connect();
-    const sendData = {
-      id: transaction.id,
-      status: transaction.statusId,
-      value: transaction.value,
+  async onModuleInit() {
+    await this.producer.connect();
+  }
+
+  async sendMessage(topic: string, message: Transaction) {
+    const transaction = {
+      id: message.id,
+      statusId: message.statusId,
+      value: message.value,
     };
-
-    kafkaConn.send({
+    await this.producer.send({
       topic,
       messages: [
         {
-          key: `${sendData.id}`,
-          value: JSON.stringify(sendData),
+          key: `${transaction.id}`,
+          value: JSON.stringify(transaction),
         },
       ],
     });
+  }
+
+  async onModuleDestroy() {
+    await this.producer.disconnect();
   }
 }

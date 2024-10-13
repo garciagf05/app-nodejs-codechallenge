@@ -16,7 +16,7 @@ import { Partitioners } from 'kafkajs';
             brokers: [process.env.KAFKA_BROKER],
           },
           consumer: {
-            groupId: 'antifraud-consumer-group',
+            groupId: 'anti-fraud-consumer-group',
           },
           producer: {
             createPartitioner: Partitioners.LegacyPartitioner,

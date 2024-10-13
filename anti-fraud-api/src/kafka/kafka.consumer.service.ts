@@ -3,11 +3,7 @@ import { PendingTransactionDTO } from './kafka.dto';
 
 @Injectable()
 export class KafkaConsumerService {
-  private _validatedQueueTopic: string;
-
-  constructor() {
-    this._validatedQueueTopic = process.env.VALIDATED_QUEUE_TOPIC;
-  }
+  constructor() {}
 
   async validateTransaction(message: any) {
     console.log('Received transaction from pending queue =>', message.value);
