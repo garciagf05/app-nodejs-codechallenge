@@ -39,6 +39,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
       - KAFKA_BROKER=kafka:29092
+      - PENDING_QUEUE_TOPIC=pendingQueue
   transaction-api:
     image: node:22
     working_dir: /usr/src/app
