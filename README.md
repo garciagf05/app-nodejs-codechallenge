@@ -80,3 +80,101 @@ You can use Graphql;
 When you finish your challenge, after forking a repository, you **must** open a pull request to our repository. There are no limitations to the implementation, you can follow the programming paradigm, modularization, and style that you feel is the most appropriate solution.
 
 If you have any questions, please let us know.
+
+# Solution Summary
+
+Created 3 api/directories in a monorepository project
+
+## transaction-api:
+The interface with which the operator interacts, for this exercise its function is to activate the flow to create transactions and obtain the details of a transaction.
+
+## api-gateway:
+For data management, its main function is to manage and control operations on the data and for this it uses graphql, in addition to keeping an order on the status of the transactions with the help of Kafka
+
+## anti-fraud-api:
+Its function is to check the validity of transactions.
+
+```mermaid
+  sequenceDiagram
+    participant transaction-api
+    participant api-gateway
+    participant kafka-pending-queue
+    participant anti-fraud-api
+    participant kafka-validated-queue
+
+    transaction-api->>api-gateway: HTTP request to create new transaction
+    api-gateway->>transaction-api: Transaction creation confirmation
+    api-gateway->>kafka-pending-queue: Send transaction to pending queue
+    kafka-pending-queue->>anti-fraud-api: Consume transaction for validation
+    anti-fraud-api->>kafka-validated-queue: Send validation result to validated queue
+    kafka-validated-queue->>api-gateway: Consume validation result and update on DB
+    transaction-api->>api-gateway: HTTP request for transaction details
+    api-gateway->>transaction-api: Transaction details response
+```
+## How to start it
+The docker-compose.yaml file were modified in order to run all the APIs in this monorepository.
+```bash
+docker-compose up
+```
+**Important**: kafka and zookeeper versions were updated due to ARM incompatibility with these images
+## Curls
+
+- Getting Accounts
+```curl
+curl --location 'http://localhost:3000/account' \
+--header 'Content-Type: application/json'
+```
+Response Example: 
+```json
+[
+    {
+        "id": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+        "owner": "Pedro Perez",
+        "creationDate": "2024-10-14T17:54:58.123Z"
+    }
+]
+```
+***
+- Transaction Creation, you must use existing accountExternalIdDebit accountExternalIdCredit.
+```curl
+curl --location 'http://localhost:3000/transaction' \
+--header 'Content-Type: application/json' \
+--data '{
+    "accountExternalIdDebit": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+    "accountExternalIdCredit": "19b3f15a-d4e9-4bc0-8146-2fb33a475840",
+    "transferTypeId": 1,
+    "value": 123
+  }'
+```
+Response example with transactionExternalId and initial status:
+```json
+{
+    "transactionExternalId": "f890fed4-64b1-48b7-b3f4-e2f2182182c4"
+    "accountExternalIdDebit": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+    "accountExternalIdCredit": "19b3f15a-d4e9-4bc0-8146-2fb33a475840",
+    "transferTypeId": 1,
+    "value": 123,
+    "status": "PENDING"
+  }
+```
+***
+- Transaction Details
+```curl
+curl --location 'http://localhost:3000/transaction/transactionExternalId' \
+--header 'Content-Type: application/json'
+```
+Response example:
+```json
+{
+    "transactionExternalId": "28249543-88ca-4747-9603-2e860fc8d067",
+    "transactionType": {
+        "name": "debit"
+    },
+    "status": {
+        "name": "REJECTED"
+    },
+    "value": 9999,
+    "createdAt": "2024-10-14T16:51:08.827Z"
+
+}
+```
