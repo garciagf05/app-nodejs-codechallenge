@@ -103,4 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-./**/*.gql
+#GraphQL schema
+src/*.gql
