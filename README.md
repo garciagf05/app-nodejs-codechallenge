@@ -146,14 +146,15 @@ curl --location 'http://localhost:3000/transaction' \
     "value": 123
   }'
 ```
-Response example with transactionExternalId:
+Response example with transactionExternalId and initial status:
 ```json
 {
     "transactionExternalId": "f890fed4-64b1-48b7-b3f4-e2f2182182c4"
     "accountExternalIdDebit": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
     "accountExternalIdCredit": "19b3f15a-d4e9-4bc0-8146-2fb33a475840",
     "transferTypeId": 1,
-    "value": 123
+    "value": 123,
+    "status": "PENDING"
   }
 ```
 ***
