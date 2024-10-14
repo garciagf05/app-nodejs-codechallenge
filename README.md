@@ -103,13 +103,13 @@ Its function is to check the validity of transactions.
     participant kafka-validated-queue
 
     transaction-api->>api-gateway: HTTP request to create new transaction
-    api-gateway-->>transaction-api: Transaction creation confirmation
+    api-gateway->>transaction-api: Transaction creation confirmation
     api-gateway->>kafka-pending-queue: Send transaction to pending queue
     kafka-pending-queue->>antifraud-api: Consume transaction for validation
     antifraud-api->>kafka-validated-queue: Send validation result to validated queue
     kafka-validated-queue->>api-gateway: Consume validation result and update on DB
     transaction-api->>api-gateway: HTTP request for transaction details
-    api-gateway-->>transaction-api: Transaction details response
+    api-gateway->>transaction-api: Transaction details response
 ```
 ## How to start it
 The docker-compose.yaml file were modified in order to run all the APIs in this monorepository.
