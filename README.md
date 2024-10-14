@@ -111,7 +111,13 @@ Its function is to check the validity of transactions.
     transaction-api->>api-gateway: HTTP request for transaction details
     api-gateway-->>transaction-api: Transaction details response
 ```
-## curls
+## How to start it
+The docker-compose.yaml file were modified in order to run al the APISs in this monorepository
+```bash
+docker-compose up
+```
+**Important**: kafka and zookeeper versions were updated due to ARM incompatibility with these images
+## Curls
 
 - Getting Accounts
 ```curl
