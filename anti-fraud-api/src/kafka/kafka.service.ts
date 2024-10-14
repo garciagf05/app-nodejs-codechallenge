@@ -1,11 +1,17 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Kafka } from 'kafkajs';
-import { PendingTransactionDTO, ValidatedTransactionDTO } from './kafka.dto';
+import {
+  PendingTransactionDTO,
+  StatusDTO,
+  ValidatedTransactionDTO,
+} from './kafka.dto';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnModuleDestroy {
   private _pendingQueueTopic: string;
   private _validatedQueueTopic: string;
+  private _maximunTramsactionValue: number;
+  private _statusData: StatusDTO;
 
   private _kafka = new Kafka({
     clientId: 'anti-fraud-api',
@@ -19,6 +25,11 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   constructor() {
     this._pendingQueueTopic = process.env.PENDING_QUEUE_TOPIC;
     this._validatedQueueTopic = process.env.VALIDATED_QUEUE_TOPIC;
+    this._maximunTramsactionValue = 1000;
+    this._statusData = {
+      APPROVED: 2,
+      REJECTED: 3,
+    };
   }
 
   async onModuleInit() {
@@ -43,10 +54,10 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   async _validateTransaction(message: string) {
     const validatedTransaction: PendingTransactionDTO = JSON.parse(message);
 
-    if (validatedTransaction.value > 1000) {
-      validatedTransaction.statusId = 3;
+    if (validatedTransaction.value > this._maximunTramsactionValue) {
+      validatedTransaction.statusId = this._statusData.REJECTED;
     } else {
-      validatedTransaction.statusId = 2;
+      validatedTransaction.statusId = this._statusData.APPROVED;
     }
 
     await this._sendMessage(this._validatedQueueTopic, validatedTransaction);

@@ -10,3 +10,7 @@ export class ValidatedTransactionDTO {
   statusId: number;
 }
 
+export class StatusDTO {
+  APPROVED: number;
+  REJECTED: number;
+}
