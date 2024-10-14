@@ -80,3 +80,56 @@ You can use Graphql;
 When you finish your challenge, after forking a repository, you **must** open a pull request to our repository. There are no limitations to the implementation, you can follow the programming paradigm, modularization, and style that you feel is the most appropriate solution.
 
 If you have any questions, please let us know.
+
+# Solution Summary
+
+Created 3 api/directories in a monorepository project
+
+##transaction-api:
+The interface with which the operator interacts, for this exercise its function is to activate the flow to create transactions and obtain the details of a transaction.
+
+##api-gateway:
+For data management, its main function is to manage and control operations on the data and for this it uses graphql, in addition to keeping an order on the status of the transactions with the help of Kafka
+
+##anti-fraud-api:
+Its function is to check the validity of transactions.
+
+```sequence
+transaction-api->api-gateway: http request to create a new transaction
+transaction-api<-api-gateway: transaction creation confirmation
+api-gateway-->antifraud-api: Kafka pending queue for transactions validations
+api-gateway<--antifraud-api: Kafka validated queue for validations proccesed
+transaction-api->api-gateway: http request to get transaction detail
+transaction-api<-api-gateway: transaction detail response
+```
+###curls
+
+- Getting Accounts
+```
+curl --location 'http://localhost:3000/account' \
+--header 'Content-Type: application/json'
+```
+
+
+
+- Transaction Creation, you must use existing accountExternalIdDebit accountExternalIdCredit.
+```
+curl --location 'http://localhost:3000/transaction' \
+--header 'Content-Type: application/json' \
+--data '{
+    "accountExternalIdDebit": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+    "accountExternalIdCredit": "19b3f15a-d4e9-4bc0-8146-2fb33a475840",
+    "transferTypeId": 1,
+    "value": 123
+  }'
+```
+Response example:
+```json
+{
+    "transactionExternalId": "f890fed4-64b1-48b7-b3f4-e2f2182182c4"
+    "accountExternalIdDebit": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+    "accountExternalIdCredit": "19b3f15a-d4e9-4bc0-8146-2fb33a475840",
+    "transferTypeId": 1,
+    "value": 123
+  }
+```
