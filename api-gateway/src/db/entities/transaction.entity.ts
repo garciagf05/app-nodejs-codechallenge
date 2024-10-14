@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { TransferType } from './transferType.entity';
+import { TransactionType } from './transactionType.entity';
 import { Status } from './status.entity';
 import { Account } from './account.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -39,13 +39,13 @@ export class Transaction {
   @Column('decimal', { precision: 10, scale: 2 })
   value: number;
 
-  @Field(() => TransferType)
-  @ManyToOne(() => TransferType, { eager: true, nullable: false })
-  transferType: TransferType;
+  @Field(() => TransactionType)
+  @ManyToOne(() => TransactionType, { eager: true, nullable: false })
+  transactionType: TransactionType;
 
   @Field(() => Number)
   @Column()
-  transferTypeId: number;
+  transactionTypeId: number;
 
   @Field(() => Status)
   @ManyToOne(() => Status, { eager: true, nullable: false })
@@ -54,4 +54,8 @@ export class Transaction {
   @Field(() => Status)
   @Column({ default: 1 })
   statusId: number;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Field(() => Date)
+  creationDate: Date;
 }

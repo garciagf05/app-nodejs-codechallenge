@@ -13,3 +13,11 @@ export class TransactionCreatedDto {
   value: number;
   status: string;
 }
+
+export class TransactionDetailDto {
+  transactionExternalId: string;
+  transactionType: { name: string };
+  transactionStatus: { name: string };
+  value: number;
+  createdAt: Date;
+}

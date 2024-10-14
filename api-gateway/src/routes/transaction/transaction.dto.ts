@@ -12,11 +12,19 @@ export class CreateTransactionInput {
   value: number;
 
   @Field(() => Number)
-  transferTypeId: number;
+  transactionTypeId: number;
 }
 
-export class UpdatedStatusTransactionDTO {
+export class UpdatedStatusTransactionDto {
   id: string;
   statusId: number;
   value: number;
+}
+
+export class TransactionDetailDto {
+  transactionExternalId: string;
+  transactionType: { name: string };
+  status: { name: string };
+  value: number;
+  createdAt: Date;
 }

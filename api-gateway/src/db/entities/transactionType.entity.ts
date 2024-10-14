@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 @ObjectType()
-export class TransferType {
+export class TransactionType {
   @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;

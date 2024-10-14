@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { CreateTransactionDto, TransactionCreatedDto } from './transaction.dto';
-import { createTransaction as createTransactionQuery } from './transaction.query';
+import {
+  CreateTransactionDto,
+  TransactionCreatedDto,
+  TransactionDetailDto,
+} from './transaction.dto';
+import {
+  transactionDetailQuery,
+  createTransactionQuery,
+} from './transaction.query';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -13,6 +20,24 @@ export class TransactionService {
     this._apiGatewayPath = process.env.API_GATEWAY_PATH;
   }
 
+  getTransactionDetails(transactionExternalId: string): Observable<any> {
+    try {
+      const response = this.httpService
+        .post(
+          `${this._apiGatewayPath}/gql`,
+          {
+            query: transactionDetailQuery,
+            variables: { transactionExternalId },
+          },
+          { headers: { 'Content-Type': 'application/json' } },
+        )
+        .pipe(map(this._mapTransactionDetailResponse));
+      return response;
+    } catch (error) {
+      throw new Error(`Error creating transaction: ${error.message}`);
+    }
+  }
+
   createTransaction(
     createTransactionDto: CreateTransactionDto,
   ): Observable<TransactionCreatedDto> {
@@ -20,7 +45,7 @@ export class TransactionService {
       input: {
         accountExternalIdDebit: createTransactionDto.accountExternalIdDebit,
         accountExternalIdCredit: createTransactionDto.accountExternalIdCredit,
-        transferTypeId: createTransactionDto.transferTypeId,
+        transactionTypeId: createTransactionDto.transferTypeId,
         value: createTransactionDto.value,
       },
     };
@@ -40,6 +65,24 @@ export class TransactionService {
     }
   }
 
+  private _mapTransactionDetailResponse(response): TransactionDetailDto {
+    const result = response.data;
+
+    if (result.errors && result.errors.length) {
+      throw new Error(
+        `Error getting Transaction: ${JSON.stringify(response.data.errors)}`,
+      );
+    }
+
+    if (!result.data.transaction) {
+      throw new Error(
+        `Error getting Transaction: ${JSON.stringify(response.data.errors)}`,
+      );
+    }
+
+    return result.data.transaction;
+  }
+
   private _mapTransactionResponse(response): TransactionCreatedDto {
     const result = response.data;
 
@@ -55,7 +98,7 @@ export class TransactionService {
       transactionExternalId: transaction.transactionExternalId,
       accountExternalIdDebit: transaction.accountExternalIdDebit.id,
       accountExternalIdCredit: transaction.accountExternalIdCredit.id,
-      transferTypeId: transaction.transferTypeId,
+      transferTypeId: transaction.transactionTypeId,
       value: transaction.value,
       status: transaction.status.id,
     };
