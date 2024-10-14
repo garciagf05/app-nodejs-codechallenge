@@ -21,3 +21,12 @@ export class TransactionDetailDto {
   value: number;
   createdAt: Date;
 }
+
+export class CreateTransactionResponseDto {
+  transactionExternalId: string;
+  accountExternalIdDebit: { id: string };
+  accountExternalIdCredit: { id: string };
+  transactionTypeId: number;
+  value: number;
+  status: { description: string };
+}

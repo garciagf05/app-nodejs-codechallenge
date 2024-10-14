@@ -112,7 +112,7 @@ Its function is to check the validity of transactions.
     api-gateway-->>transaction-api: Transaction details response
 ```
 ## How to start it
-The docker-compose.yaml file were modified in order to run al the APISs in this monorepository
+The docker-compose.yaml file were modified in order to run all the APIs in this monorepository.
 ```bash
 docker-compose up
 ```

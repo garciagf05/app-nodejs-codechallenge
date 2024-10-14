@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import {
   CreateTransactionDto,
+  CreateTransactionResponseDto,
   TransactionCreatedDto,
   TransactionDetailDto,
 } from './transaction.dto';
@@ -92,7 +93,8 @@ export class TransactionService {
       );
     }
 
-    const transaction = result.data.createTransaction;
+    const transaction: CreateTransactionResponseDto =
+      result.data.createTransaction;
 
     return {
       transactionExternalId: transaction.transactionExternalId,
@@ -100,7 +102,7 @@ export class TransactionService {
       accountExternalIdCredit: transaction.accountExternalIdCredit.id,
       transferTypeId: transaction.transactionTypeId,
       value: transaction.value,
-      status: transaction.status.id,
+      status: transaction.status.description,
     };
   }
 }
