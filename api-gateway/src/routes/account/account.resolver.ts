@@ -1,6 +1,6 @@
 import { Resolver, Query } from '@nestjs/graphql';
 import { AccountService } from './account.service';
-import { Account } from 'src/db/entities/account.entity';
+import { Account } from './../../db/entities/account.entity';
 
 @Resolver()
 export class AccountResolver {

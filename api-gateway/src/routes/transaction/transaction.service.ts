@@ -2,8 +2,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './../../db/entities/transaction.entity';
-import { CreateTransactionInput, TransactionDetailDto, UpdatedStatusTransactionDto } from './transaction.dto';
-import { KafkaService } from 'src/kafka/kafka.service';
+import {
+  CreateTransactionInput,
+  UpdatedStatusTransactionDto,
+} from './transaction.dto';
+import { KafkaService } from './../../kafka/kafka.service';
 
 @Injectable()
 export class TransactionService implements OnModuleInit {
