@@ -85,13 +85,13 @@ If you have any questions, please let us know.
 
 Created 3 api/directories in a monorepository project
 
-##transaction-api:
+## transaction-api:
 The interface with which the operator interacts, for this exercise its function is to activate the flow to create transactions and obtain the details of a transaction.
 
-##api-gateway:
+## api-gateway:
 For data management, its main function is to manage and control operations on the data and for this it uses graphql, in addition to keeping an order on the status of the transactions with the help of Kafka
 
-##anti-fraud-api:
+## anti-fraud-api:
 Its function is to check the validity of transactions.
 
 ```sequence
@@ -102,18 +102,26 @@ api-gateway<--antifraud-api: Kafka validated queue for validations proccesed
 transaction-api->api-gateway: http request to get transaction detail
 transaction-api<-api-gateway: transaction detail response
 ```
-###curls
+## curls
 
 - Getting Accounts
-```
+```curl
 curl --location 'http://localhost:3000/account' \
 --header 'Content-Type: application/json'
 ```
-
-
-
-- Transaction Creation, you must use existing accountExternalIdDebit accountExternalIdCredit.
+Response Example: 
+```json
+[
+    {
+        "id": "8cf2ac75-866d-41be-8f37-b2e47303edf6",
+        "owner": "Pedro Perez",
+        "creationDate": "2024-10-14T17:54:58.123Z"
+    }
+]
 ```
+***
+- Transaction Creation, you must use existing accountExternalIdDebit accountExternalIdCredit.
+```curl
 curl --location 'http://localhost:3000/transaction' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -123,7 +131,7 @@ curl --location 'http://localhost:3000/transaction' \
     "value": 123
   }'
 ```
-Response example:
+Response example with transactionExternalId:
 ```json
 {
     "transactionExternalId": "f890fed4-64b1-48b7-b3f4-e2f2182182c4"
@@ -132,4 +140,25 @@ Response example:
     "transferTypeId": 1,
     "value": 123
   }
+```
+***
+- Transaction Details
+```curl
+curl --location 'http://localhost:3000/transaction/transactionExternalId' \
+--header 'Content-Type: application/json'
+```
+Response example:
+```json
+{
+    "transactionExternalId": "28249543-88ca-4747-9603-2e860fc8d067",
+    "transactionType": {
+        "name": "debit"
+    },
+    "status": {
+        "name": "REJECTED"
+    },
+    "value": 9999,
+    "createdAt": "2024-10-14T16:51:08.827Z"
+
+}
 ```
