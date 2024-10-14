@@ -94,13 +94,14 @@ For data management, its main function is to manage and control operations on th
 ## anti-fraud-api:
 Its function is to check the validity of transactions.
 
-```sequence
-transaction-api->api-gateway: http request to create a new transaction
-transaction-api<-api-gateway: transaction creation confirmation
-api-gateway-->antifraud-api: Kafka pending queue for transactions validations
-api-gateway<--antifraud-api: Kafka validated queue for validations proccesed
-transaction-api->api-gateway: http request to get transaction detail
-transaction-api<-api-gateway: transaction detail response
+```mermaid
+  sequence
+  transaction-api->api-gateway: http request to create a new transaction
+  transaction-api<-api-gateway: transaction creation confirmation
+  api-gateway-->antifraud-api: Kafka pending queue for transactions validations
+  api-gateway<--antifraud-api: Kafka validated queue for validations proccesed
+  transaction-api->api-gateway: http request to get transaction detail
+  transaction-api<-api-gateway: transaction detail response
 ```
 ## curls
 
