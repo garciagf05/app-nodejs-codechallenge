@@ -95,13 +95,21 @@ For data management, its main function is to manage and control operations on th
 Its function is to check the validity of transactions.
 
 ```mermaid
-  flowchart LR
-  transaction-api->api-gateway: http request to create a new transaction
-  transaction-api<-api-gateway: transaction creation confirmation
-  api-gateway-->antifraud-api: Kafka pending queue for transactions validations
-  api-gateway<--antifraud-api: Kafka validated queue for validations proccesed
-  transaction-api->api-gateway: http request to get transaction detail
-  transaction-api<-api-gateway: transaction detail response
+  sequenceDiagram
+    participant transaction-api
+    participant api-gateway
+    participant kafka-pending-queue
+    participant antifraud-api
+    participant kafka-validated-queue
+
+    transaction-api->>api-gateway: HTTP request to create new transaction
+    api-gateway-->>transaction-api: Transaction creation confirmation
+    api-gateway->>kafka-pending-queue: Send transaction to pending queue
+    antifraud-api->>kafka-pending-queue: Consume transaction for validation
+    antifraud-api->>kafka-validated-queue: Send validation result to validated queue
+    api-gateway->>kafka-validated-queue: Consume validation result
+    transaction-api->>api-gateway: HTTP request for transaction details
+    api-gateway-->>transaction-api: Transaction details response
 ```
 ## curls
 
