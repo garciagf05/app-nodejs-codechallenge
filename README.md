@@ -99,14 +99,14 @@ Its function is to check the validity of transactions.
     participant transaction-api
     participant api-gateway
     participant kafka-pending-queue
-    participant antifraud-api
+    participant anti-fraud-api
     participant kafka-validated-queue
 
     transaction-api->>api-gateway: HTTP request to create new transaction
     api-gateway->>transaction-api: Transaction creation confirmation
     api-gateway->>kafka-pending-queue: Send transaction to pending queue
-    kafka-pending-queue->>antifraud-api: Consume transaction for validation
-    antifraud-api->>kafka-validated-queue: Send validation result to validated queue
+    kafka-pending-queue->>anti-fraud-api: Consume transaction for validation
+    anti-fraud-api->>kafka-validated-queue: Send validation result to validated queue
     kafka-validated-queue->>api-gateway: Consume validation result and update on DB
     transaction-api->>api-gateway: HTTP request for transaction details
     api-gateway->>transaction-api: Transaction details response
