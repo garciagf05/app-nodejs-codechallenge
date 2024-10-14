@@ -14,3 +14,9 @@ export class CreateTransactionInput {
   @Field(() => Number)
   transferTypeId: number;
 }
+
+export class UpdatedStatusTransactionDTO {
+  id: string;
+  statusId: number;
+  value: number;
+}

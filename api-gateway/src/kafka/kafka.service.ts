@@ -4,14 +4,21 @@ import { Transaction } from 'src/db/entities/transaction.entity';
 
 @Injectable()
 export class KafkaService {
-  private kafka = new Kafka({
+  private _validatedQueueTopic: string = process.env.VALIDATED_QUEUE_TOPIC;
+  private _kafka = new Kafka({
     clientId: 'api-gateway',
-    brokers: [process.env.KAFKA_BROKER], // Dirección del broker de Kafka
+    brokers: [process.env.KAFKA_BROKER],
   });
-  private producer = this.kafka.producer();
+  private _producer = this._kafka.producer();
+  consumer = this._kafka.consumer({ groupId: 'api-gateway-group' });
 
   async onModuleInit() {
-    await this.producer.connect();
+    await this._producer.connect();
+    await this.consumer.connect();
+    await this.consumer.subscribe({
+      topic: this._validatedQueueTopic,
+      fromBeginning: false,
+    });
   }
 
   async sendMessage(topic: string, message: Transaction) {
@@ -20,7 +27,7 @@ export class KafkaService {
       statusId: message.statusId,
       value: message.value,
     };
-    await this.producer.send({
+    await this._producer.send({
       topic,
       messages: [
         {
@@ -32,6 +39,7 @@ export class KafkaService {
   }
 
   async onModuleDestroy() {
-    await this.producer.disconnect();
+    await this._producer.disconnect();
+    await this.consumer.disconnect();
   }
 }
