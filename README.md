@@ -105,7 +105,7 @@ Its function is to check the validity of transactions.
     transaction-api->>api-gateway: HTTP request to create new transaction
     api-gateway-->>transaction-api: Transaction creation confirmation
     api-gateway->>kafka-pending-queue: Send transaction to pending queue
-    kafka-pending-queue->>>antifraud-api: Consume transaction for validation
+    kafka-pending-queue->>antifraud-api: Consume transaction for validation
     antifraud-api->>kafka-validated-queue: Send validation result to validated queue
     kafka-validated-queue->>api-getway: Consume validation result
     transaction-api->>api-gateway: HTTP request for transaction details
